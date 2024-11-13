@@ -1,5 +1,3 @@
-conda activate localGPUT-cuda
-
 # Installing localGPT
 # make a new conda environment
 > conda create -n test python=3.9.0 ipython
@@ -14,4 +12,11 @@ conda activate localGPUT-cuda
 > CMAKE_ARGS="-DGGML_BLAS=ON -DGGML_BLAS_VENDOR=cuBLAS" FORCE_CMAKE=1 pip install llama-cpp-python
 
 > pip install langchain==0.0.348
+
+# Running localGPT
+> conda activate /work/atif/localGPT-env/
+
+# then follow the steps in localGPT's README
+# FastCaloSim related documents are in /work/atif/localGPT-env/FCS-KB
+
 
