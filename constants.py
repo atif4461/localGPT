@@ -110,7 +110,11 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 # MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2"
 
 # LLAMA 3 # use for Apple Silicon
-MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
+#MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
+#MODEL_BASENAME = None
+
+# Code LLAMA 3 # use for Codes
+MODEL_ID = "meta-llama/CodeLlama-7b-hf"
 MODEL_BASENAME = None
 
 # LLAMA 3 # use for NVIDIA GPUs

@@ -1,0 +1,17 @@
+conda activate localGPUT-cuda
+
+# Installing localGPT
+# make a new conda environment
+> conda create -n test python=3.9.0 ipython
+
+# install torch with cuda
+> pip install torch==2.3.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+> pip install -r requirements.txt
+# needed to downgrade to huggingface_hub==0.24.7 as cached_download has been deprecated
+# may need to change versions/patches, see conda_working_cuda.txt for working state
+
+> CMAKE_ARGS="-DGGML_BLAS=ON -DGGML_BLAS_VENDOR=cuBLAS" FORCE_CMAKE=1 pip install llama-cpp-python
+
+> pip install langchain==0.0.348
+
