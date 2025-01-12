@@ -90,8 +90,13 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 ####    32b        130 GB       65 GB       32.5 GB - 35 GB    16.25 GB - 19 GB
 ####    65b        260.8 GB     130.4 GB    65.2 GB - 67 GB    32.6 GB -  - 35 GB
 
-# MODEL_ID = "TheBloke/Llama-2-7B-Chat-GGML"
-# MODEL_BASENAME = "llama-2-7b-chat.ggmlv3.q4_0.bin"
+# Good
+MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
+MODEL_BASENAME = None
+
+# Not good but fast
+# MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
+# MODEL_BASENAME = None
 
 ####
 #### (FOR GGUF MODELS)
@@ -100,22 +105,23 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 # MODEL_ID = "TheBloke/Llama-2-13b-Chat-GGUF"
 # MODEL_BASENAME = "llama-2-13b-chat.Q4_K_M.gguf"
 
-MODEL_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
-MODEL_BASENAME = "llama-2-7b-chat.Q4_K_M.gguf"
+# MODEL_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
+# MODEL_BASENAME = "llama-2-7b-chat.Q4_K_M.gguf"
 
-# MODEL_ID = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
-# MODEL_BASENAME = "Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
+#MODEL_ID = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
+#MODEL_BASENAME = "Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
 
 # Use mistral to run on hpu
 # MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2"
 
 # LLAMA 3 # use for Apple Silicon
-#MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
-#MODEL_BASENAME = None
+# Good
+# MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
+# MODEL_BASENAME = None
 
 # Code LLAMA 3 # use for Codes
-#MODEL_ID = "meta-llama/CodeLlama-7b-hf"
-#MODEL_BASENAME = None
+# MODEL_ID = "meta-llama/CodeLlama-7b-hf"
+# MODEL_BASENAME = None
 
 # LLAMA 3 # use for NVIDIA GPUs
 # MODEL_ID = "unsloth/llama-3-8b-bnb-4bit"

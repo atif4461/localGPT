@@ -19,4 +19,5 @@
 # then follow the steps in localGPT's README
 # FastCaloSim related documents are in /work/atif/localGPT-env/FCS-KB
 
-
+# For Treesitter parser
+pip install tree-sitter==0.20.4 tree-sitter-languages==1.10.2

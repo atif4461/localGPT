@@ -3,6 +3,11 @@ import logging
 import click
 import torch
 import utils
+
+import parse_cpp
+from parse_cpp import Language
+from parse_cpp import Treesitter
+
 from langchain.chains import RetrievalQA
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.llms import HuggingFacePipeline
@@ -38,6 +43,84 @@ from constants import (
     CHROMA_SETTINGS,    
 )
 
+import re
+import glob
+
+
+def extract_cpp_functions(file_path):
+    
+    functions = []
+    with open(file_path, "r") as file:
+        # Read the entire content of the file into a string
+        file_bytes = file.read().encode()
+
+        file_extension = "cpp" #utils.get_file_extension(file_name)
+        programming_language = Language.CPP #utils.get_programming_language(file_extension)
+
+        treesitter_parser = Treesitter.create_treesitter(programming_language)
+        treesitterNodes: list[TreesitterMethodNode] = treesitter_parser.parse(
+            file_bytes
+        )
+
+        for node in treesitterNodes:
+            # Add uncommented functions to list
+            if node.doc_comment == None:
+                functions.append(node.method_source_code) 
+
+    file.close()
+    return functions
+
+
+
+
+def rewrite_file_with_comments(functions, file_path, prompt_file, qa): 
+
+    file_path_comments = file_path + ".comments.cxx"
+ 
+    functions_first_line = []
+    for function in functions:
+        #print(function)
+        newline_index = function.index('\n')
+        line = function[:newline_index]
+        functions_first_line.append(line)
+
+    print(f'Generating comments for {len(functions_first_line)} functions in {file_path}')
+
+    idx = 0
+    try:
+        with open(file_path, 'r') as source_file:
+            with open(file_path_comments, 'w') as destination_file:
+                for line in source_file:
+                    # if there are no function definitions
+                    if len(functions_first_line) > 0:
+                        # if all functions have been read
+                        if idx == len(functions_first_line):
+                            destination_file.write(line)
+                        else:
+                            # Strip the lines of trailing/leading whitespaces
+                            if line.strip() == functions_first_line[idx].strip():
+                                query = prompt_file + functions[idx]
+                                res = qa(query)
+                                answer, docs = res["result"], res["source_documents"]
+                                destination_file.write("// LLM Generated Comment ")
+                                destination_file.write(answer)
+                                destination_file.write("\n")
+                                destination_file.write(line)
+                                print(f'Function {idx}: {line} Done')
+                                idx = idx + 1
+                            else:
+                                destination_file.write(line)
+                    else:
+                        destination_file.write(line)
+
+    except FileNotFoundError:
+        print(f"Error: The file {c_file_path} was not found.")
+    except IOError as e:
+        print(f"Error: An I/O error occurred. {e}")
+
+    # Exchange file names
+    #os.rename(file_path, file_path+'.orig')
+    #os.rename(file_path_comments, file_path)
 
 def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
     """
@@ -269,31 +352,86 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
 
     qa = retrieval_qa_pipline(device_type, use_history, promptTemplate_type=model_type)
     # Interactive questions and answers
-    while True:
-        query = input("\nEnter a query: ")
-        if query == "exit":
-            break
-        # Get the answer from the chain
-        res = qa(query)
-        answer, docs = res["result"], res["source_documents"]
+    #while True:
+    #    query = input("\nEnter a query: ")
+    #    if query == "exit":
+    #        break
+    #    # Get the answer from the chain
+    #    res = qa(query)
+    #    answer, docs = res["result"], res["source_documents"]
 
-        # Print the result
-        print("\n\n> Question:")
-        print(query)
-        print("\n> Answer:")
-        print(answer)
+    #    # Print the result
+    #    print("\n\n> Question:")
+    #    print(query)
+    #    print("\n> Answer:")
+    #    print(answer)
 
-        if show_sources:  # this is a flag that you can set to disable showing answers.
-            # # Print the relevant sources used for the answer
-            print("----------------------------------SOURCE DOCUMENTS---------------------------")
-            for document in docs:
-                print("\n> " + document.metadata["source"] + ":")
-                print(document.page_content)
-            print("----------------------------------SOURCE DOCUMENTS---------------------------")
+    #    if show_sources:  # this is a flag that you can set to disable showing answers.
+    #        # # Print the relevant sources used for the answer
+    #        print("----------------------------------SOURCE DOCUMENTS---------------------------")
+    #        for document in docs:
+    #            print("\n> " + document.metadata["source"] + ":")
+    #            print(document.page_content)
+    #        print("----------------------------------SOURCE DOCUMENTS---------------------------")
 
-        # Log the Q&A to CSV only if save_qa is True
-        if save_qa:
-            utils.log_to_csv(query, answer)
+    #    # Log the Q&A to CSV only if save_qa is True
+    #    if save_qa:
+    #        utils.log_to_csv(query, answer)
+   
+    # Code documentation
+
+    #file = open("prompt.txt")
+    #print(file.read())
+    #query = file.read()
+    #res = qa(query)
+    #answer, docs = res["result"], res["source_documents"]
+    #file.close()
+    ## Print the result
+    #print("\n\n> Question:")
+    #print(query)
+    #print("\n> Answer:")
+    #print(answer)
+
+    # Run as script
+    prompt_file = open("prompt.txt").read()
+
+    #dir_path = r'/home/atif/FCS-GPU/FastCaloSimAnalyzer/**/*.C'
+    dir_path = r'/home/atif/localGPT/FCS-GPU/FastCaloSimAnalyzer/Root/'
+    #dir_path = r'/home/atif/localGPT/CaloGpuGeneral_omp.h'
+    #dir_path = r'/home/atif/localGPT/CaloGpuGeneral_omp.cxx'
+
+    list_all_files = []
+    # search all files inside a specific folder
+    for file in glob.glob(dir_path, recursive=True):
+        list_all_files.append(file)
+    print(list_all_files)
+    
+    for file_path in list_all_files:
+
+        print("\n" + "=" *10 + file_path + "=" * 10 + "\n")
+
+        functions = extract_cpp_functions(file_path)
+      
+        #print("-" *10 + "-" * 10)
+        #for function in functions:
+        #    print(function)
+        #    print("=-" *10 + "-" * 10)
+
+        # Print functions
+        #for i, function in enumerate(functions, 1):
+        #    print(f"Function {i}:\n")
+        #    query = prompt_file + function
+        #    res = qa(query)
+        #    answer, docs = res["result"], res["source_documents"]
+        #    print(answer)
+        #    #print(function)
+        #    print("\n" + "-=" * 40 + "\n")
+
+        rewrite_file_with_comments(functions, file_path, prompt_file, qa)
+
+
+
+
 
 
 if __name__ == "__main__":
