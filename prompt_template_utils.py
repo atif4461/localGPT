@@ -11,8 +11,8 @@ from langchain.prompts import PromptTemplate
 
 system_prompt = """You are a helpful assistant, you will use the provided context to answer user questions.
 Read the given context before answering questions and think step by step. 
-Do not use any other information for answering user. 
-Provide a precise answer to the question."""
+Do not use any other information for answering user. Provide a concise and relevant answer to the question. 
+If you can not answer a user question based on the provided context then give no response."""
 
 #system_prompt = """You are a helpful assistant, you will use the provided context to answer user questions.
 #Read the given context before answering questions and think step by step. If you can not answer a user question based on 
@@ -39,6 +39,9 @@ def get_prompt_template(system_prompt=system_prompt, promptTemplate_type=None, h
 
             prompt_template = B_INST + SYSTEM_PROMPT + instruction + E_INST
             prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
+
+    elif promptTemplate_type == "deepseek-ai":
+        prompt = ""
 
     elif promptTemplate_type == "llama3":
 
@@ -85,6 +88,32 @@ def get_prompt_template(system_prompt=system_prompt, promptTemplate_type=None, h
                 + E_INST
             )
             prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
+
+    elif promptTemplate_type == "llava":
+        B_INST, E_INST = "[INST]<image> ", " [/INST]"
+        if history:
+            prompt_template = (
+                B_INST
+                + system_prompt
+                + """
+    
+            Context: {history} \n {context}
+            User: {question}"""
+                + E_INST
+            )
+            prompt = PromptTemplate(input_variables=["history", "context", "question"], template=prompt_template)
+        else:
+            prompt_template = (
+                B_INST
+                + system_prompt
+                + """
+            
+            Context: {context}
+            User: {question}"""
+                + E_INST
+            )
+            prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
+ 
     else:
         # change this based on the model you have selected.
         if history:

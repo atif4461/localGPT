@@ -28,10 +28,6 @@ CHROMA_SETTINGS = Settings(
     is_persistent=True,
 )
 
-# Context Window and Max New Tokens
-CONTEXT_WINDOW_SIZE = 8096
-MAX_NEW_TOKENS = CONTEXT_WINDOW_SIZE  # int(CONTEXT_WINDOW_SIZE/4)
-
 #### If you get a "not enough space in the buffer" error, you should reduce the values below, start with half of the original values and keep halving the value until the error stops appearing
 
 N_GPU_LAYERS = 100  # Llama-2-70B has 83 layers
@@ -93,10 +89,22 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 # Good
 MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 MODEL_BASENAME = None
+# Context Window and Max New Tokens
+CONTEXT_WINDOW_SIZE = 65536 # 128k for Llama-3.3-70B-instruct
+#CONTEXT_WINDOW_SIZE = 8096
+MAX_NEW_TOKENS = CONTEXT_WINDOW_SIZE  # int(CONTEXT_WINDOW_SIZE/4)
+
+#MODEL_ID = "deepseek-ai/DeepSeek-R1"
+#MODEL_ID = "unsloth/DeepSeek-R1-GGUF"
+#MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+#MODEL_BASENAME = None
+
+#MODEL_ID = "mistralai/Mistral-Large-Instruct-2411"
+#MODEL_BASENAME = None
 
 # Not good but fast
-# MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
-# MODEL_BASENAME = None
+#MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
+#MODEL_BASENAME = None
 
 ####
 #### (FOR GGUF MODELS)
@@ -110,9 +118,6 @@ MODEL_BASENAME = None
 
 #MODEL_ID = "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF"
 #MODEL_BASENAME = "Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
-
-# Use mistral to run on hpu
-# MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2"
 
 # LLAMA 3 # use for Apple Silicon
 # Good
