@@ -17,7 +17,7 @@ SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS"
 
 PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
-MODELS_PATH = "./models"
+MODELS_PATH = "/home/atif/localGPT/models"
 
 # Can be changed to a specific number
 INGEST_THREADS = os.cpu_count() or 8
@@ -87,11 +87,11 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 ####    65b        260.8 GB     130.4 GB    65.2 GB - 67 GB    32.6 GB -  - 35 GB
 
 # Good
-MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
-MODEL_BASENAME = None
+#MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
+#MODEL_BASENAME = None
 # Context Window and Max New Tokens
-CONTEXT_WINDOW_SIZE = 65536 # 128k for Llama-3.3-70B-instruct
-#CONTEXT_WINDOW_SIZE = 8096
+#CONTEXT_WINDOW_SIZE = 65536 # 128k for Llama-3.3-70B-instruct
+CONTEXT_WINDOW_SIZE = 8096
 MAX_NEW_TOKENS = CONTEXT_WINDOW_SIZE  # int(CONTEXT_WINDOW_SIZE/4)
 
 #MODEL_ID = "deepseek-ai/DeepSeek-R1"
@@ -103,8 +103,8 @@ MAX_NEW_TOKENS = CONTEXT_WINDOW_SIZE  # int(CONTEXT_WINDOW_SIZE/4)
 #MODEL_BASENAME = None
 
 # Not good but fast
-#MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
-#MODEL_BASENAME = None
+MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct"
+MODEL_BASENAME = None
 
 ####
 #### (FOR GGUF MODELS)

@@ -21,3 +21,37 @@
 
 # For Treesitter parser
 pip install tree-sitter==0.20.4 tree-sitter-languages==1.10.2
+
+
+
+
+
+# python run_localGPT.py --model_type=llama3 --temperature=0.01
+#
+# Installing Doxygen and graphviz
+# TODO
+# Edit Doxyfile with name of PROJECT_NAME and INPUT
+# 
+# Install websocat
+git clone https://github.com/vi/websocat.git
+cd websocat/
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+ls $HOME/.cargo/bin/cargo
+export PKG_CONFIG_PATH=/home/atif/packages/openssl-1.1.1l/lib/pkgconfig/
+/home/atif/.cargo/bin/cargo build --release --features=ssl
+export LD_LIBRARY_PATH=/home/atif/packages/openssl-1.1.1l/lib/:$LD_LIBRARY_PATH
+# Launch websocat WebSocket for terminal
+/home/atif/packages/websocat/target/release/websocat -E -t ws-l:127.0.0.1:4461 exec:/bin/bash
+#
+# Edit doxyRAG/mywebsite.html with path to HEP_directory/doxygen/html
+#
+# cd doxyRAG and launch up Python server
+python3 -m http.server 4461 --bind 0.0.0.0
+
+# Port Forward
+ssh -L 4461:localhost:4461 atif@dahlia.csi.bnl.gov
+
+# Open http://localhost:4461/annotated.html on your browser
+#
+#
+#

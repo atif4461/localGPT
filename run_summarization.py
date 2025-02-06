@@ -136,7 +136,7 @@ def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
         model=model,
         tokenizer=tokenizer,
         max_length=MAX_NEW_TOKENS,
-        temperature=0.2,
+        temperature=0.01,
         # top_p=0.95,
         repetition_penalty=1.15,
         generation_config=generation_config,
@@ -311,18 +311,21 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
     prompt_file = open("prompt.txt").read()
 
     #dir_path = r'/home/atif/localGPT/FCS-GPU/FastCaloSimAnalyzer/**/*.cxx'
-    #dir_path = r'/home/atif/localGPT/FCS-GPU-Llama-3.3-70B-Instruct-Temp0p01-NoRAGS/FastCaloSimAnalyzer/**/*.cxx'
-    #dir_path = r'/home/atif/localGPT/FCS-GPU-Llama-3.3-70B-Instruct-Temp0p01-NoRAGS/FastCaloSimAnalyzer/Root/TFCSEnergyInterpolation.cxx'
-    #dir_path = r'/home/atif/wire-cell-2dtoy/src/*.cxx'
-    dir_path = r'/home/atif/pixeltrack-standalone/src/**/*.cc'
+    #dir_path = r'/home/atif/pixeltrack-standalone/src/**/*.cc'
     
     list_all_files = []
-    # search all files inside a specific folder
+    # search all source files inside a specific folder
+    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.cxx'
     for file in glob.glob(dir_path, recursive=True):
         list_all_files.append(file)
-    #print(list_all_files)
     
-    with open("pixeltrack_summary.txt", 'w', encoding="latin-1") as destination_file:
+    # search all header files inside a specific folder
+    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.h'
+    for file in glob.glob(dir_path, recursive=True):
+        list_all_files.append(file)
+    print(list_all_files)
+    
+    with open("wirecell_summary.txt", 'w', encoding="latin-1") as destination_file:
         for file_path in list_all_files:
 
             functions_comments, functions = extract_cpp_comments(file_path)

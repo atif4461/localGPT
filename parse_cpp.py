@@ -68,7 +68,39 @@ class Treesitter():
             result.append(
                 TreesitterMethodNode(method_name, doc_comment, None, method["method"])
             )
+        classes = self._query_all_classes(self.tree.root_node)
+        for classe in classes:
+            class_name = self._query_class_name(classe["classe"])
+            doc_comment = classe["doc_comment"]
+            result.append(
+                TreesitterMethodNode(class_name, doc_comment, None, classe["classe"])
+            )
         return result
+
+    def _query_all_classes(
+        self,
+        node: tree_sitter.Node,
+    ):
+        classes = []
+        if node.type == 'class_specifier' or node.type == 'struct_specifier':
+            doc_comment_node = None
+            if (
+                node.prev_named_sibling
+                and node.prev_named_sibling.type == self.doc_comment_identifier
+            ):
+                doc_comment_node = node.prev_named_sibling.text.decode()
+            classes.append({"classe": node, "doc_comment": doc_comment_node})
+        else:
+            for child in node.children:
+                classes.extend(self._query_all_classes(child))
+        return classes
+
+    def _query_class_name(self, node: tree_sitter.Node):
+        if node.type == 'class_specifier':
+            for child in node.children:
+                if child.type == 'class_specifier':
+                    return child.text.decode()
+        return None
 
     def _query_all_methods(
         self,
@@ -96,7 +128,7 @@ class Treesitter():
         return None
 
 
-
+#        if node.type == 'class_specifier' or node.type == 'struct_specifier':
 class TreesitterCpp(Treesitter):
     def __init__(self):
         super().__init__(Language.CPP, "function_definition", "identifier", "comment")
@@ -136,44 +168,8 @@ class TreesitterC(Treesitter):
         return None
 
 
-# Register the TreesitterJava class in the registry
+# Register the class in the registry
 TreesitterRegistry.register_treesitter(Language.C, TreesitterC)
 
 
 
-
-
-#def run():
-#    #file_name = "/home/atif/doc-comments-ai/Args.h"
-#    file_name = "/home/atif/localGPT/CaloGpuGeneral_omp.cpp"
-#
-#    generated_doc_comments = {}
-#
-#    with open(file_name, "r") as file:
-#        # Read the entire content of the file into a string
-#        file_bytes = file.read().encode()
-#
-#        file_extension = "cpp" #utils.get_file_extension(file_name)
-#        programming_language = Language.CPP #utils.get_programming_language(file_extension)
-#
-#        treesitter_parser = Treesitter.create_treesitter(programming_language)
-#        treesitterNodes: list[TreesitterMethodNode] = treesitter_parser.parse(
-#            file_bytes
-#        )
-#
-#        for node in treesitterNodes:
-#            method_source_code = node.method_source_code
-#            
-#            print(method_source_code)
-#            print("=-=-=-"*10)
-#
-#    file.close()
-#
-#
-#
-#def main():
-#    run()
-#
-#
-#if __name__ == "__main__":
-#    main()

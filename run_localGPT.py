@@ -93,7 +93,8 @@ def remove_comment_block_init_end(answer):
     return answer.replace('*/','')
 
 
-def rewrite_file_with_comments(functions, file_path, prompt_file, qa, temperature): 
+def rewrite_file_with_comments(functions, file_path, prompt, qa, temperature): 
+
 
     if len(functions) > 0:
         file_path_comments = file_path + ".comments.cxx"
@@ -120,7 +121,7 @@ def rewrite_file_with_comments(functions, file_path, prompt_file, qa, temperatur
                             else:
                                 # Strip the lines of trailing/leading whitespaces
                                 if line.strip() == functions_first_line[idx].strip():
-                                    query = prompt_file + functions[idx]
+                                    query = prompt + functions[idx]
                                     res = qa(query)
                                     answer, docs = res["result"], res["source_documents"]
                                     destination_file.write("/**")
@@ -383,62 +384,43 @@ def main(device_type, show_sources, use_history, model_type, save_qa, temperatur
         os.mkdir(MODELS_PATH)
 
     qa = retrieval_qa_pipline(device_type, use_history, promptTemplate_type=model_type, temperature=temperature)
-    # Interactive questions and answers
-#    while True:
-#        query = input("\nEnter a query: ")
-#        if query == "exit":
-#            break
-#        # Get the answer from the chain
-#        res = qa(query)
-#        answer, docs = res["result"], res["source_documents"]
-#
-#        # Print the result
-#        print("\n\n> Question:")
-#        print(query)
-#        print("\n> Answer:")
-#        print(answer)
-#
-#        if show_sources:  # this is a flag that you can set to disable showing answers.
-#            # # Print the relevant sources used for the answer
-#            print("----------------------------------SOURCE DOCUMENTS---------------------------")
-#            for document in docs:
-#                print("\n> " + document.metadata["source"] + ":")
-#                print(document.page_content)
-#            print("----------------------------------SOURCE DOCUMENTS---------------------------")
-#
-#        # Log the Q&A to CSV only if save_qa is True
-#        if save_qa:
-#            utils.log_to_csv(query, answer)
-   
+  
     # Code documentation/explanation/summarization
     # Run as script
-    prompt_file = open("prompt.txt").read()
-
-    list_all_files = []
     #dir_path = r'/home/atif/localGPT/TFCSHistoLateralShapeParametrization.cxx'
     #dir_path = r'/home/atif/localGPT/GeoRegion.h'
-    # search all source files inside a specific folder
-    for file in glob.glob(dir_path, recursive=True):
-        list_all_files.append(file)
     #dir_path = r'/home/atif/pixeltrack-standalone/src/**/*.cc'
 
-    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.cxx'
     # search all source files inside a specific folder
+    list_all_files = []
+    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.cxx'
     for file in glob.glob(dir_path, recursive=True):
         list_all_files.append(file)
-    
-    # search all header files inside a specific folder
-    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.h'
-    for file in glob.glob(dir_path, recursive=True):
-        list_all_files.append(file)
-    print(list_all_files)
-    
+    #print(list_all_files)
+   
+    prompt = "Please read the entire C++ code given below. Generate a Doxygen style comment for each function. Write only the Doxygen style comment using only alphanumeric characters. Do not explain your thinking or write the function name."
     for file_path in list_all_files:
 
         #print("\n" + "=" *10 + file_path + "=" * 10 + "\n")
         functions = extract_cpp_functions(file_path)
-        #print(functions)
-        rewrite_file_with_comments(functions, file_path, prompt_file, qa, temperature)
+        #print("BBB", functions)
+        rewrite_file_with_comments(functions, file_path, prompt, qa, temperature)
+
+    # search all header files inside a specific folder
+    list_all_files = []
+    dir_path = r'/home/atif/wire-cell-2dtoy/**/*.h'
+    for file in glob.glob(dir_path, recursive=True):
+        list_all_files.append(file)
+    #print(list_all_files)
+ 
+    prompt = "Please read the entire C++ code given below. Generate a Doxygen style comment for each class. Write only the Doxygen style comment using only alphanumeric characters. Do not explain your thinking or write the class name."
+
+    for file_path in list_all_files:
+
+        #print("\n" + "=" *10 + file_path + "=" * 10 + "\n")
+        functions = extract_cpp_functions(file_path)
+        #print("BBB", functions)
+        rewrite_file_with_comments(functions, file_path, prompt, qa, temperature)
 
 
 
