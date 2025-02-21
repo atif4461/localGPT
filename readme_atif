@@ -40,18 +40,69 @@ ls $HOME/.cargo/bin/cargo
 export PKG_CONFIG_PATH=/home/atif/packages/openssl-1.1.1l/lib/pkgconfig/
 /home/atif/.cargo/bin/cargo build --release --features=ssl
 export LD_LIBRARY_PATH=/home/atif/packages/openssl-1.1.1l/lib/:$LD_LIBRARY_PATH
-# Launch websocat WebSocket for terminal
-/home/atif/packages/websocat/target/release/websocat -E -t ws-l:127.0.0.1:4461 exec:/bin/bash
-#
-# Edit doxyRAG/mywebsite.html with path to HEP_directory/doxygen/html
-#
-# cd doxyRAG and launch up Python server
-python3 -m http.server 4461 --bind 0.0.0.0
+
+# NEW Launch WebSockets on port 8080 from Python script
+python3 websocket_server.py
+
+# Lunch up Python server
+python3 -m http.server 8080 --bind 0.0.0.0
 
 # Port Forward
-ssh -L 4461:localhost:4461 atif@dahlia.csi.bnl.gov
+ssh -L 8080:localhost:8080 -L 8765:localhost:8765 atif@dahlia.csi.bnl.gov
 
+# Copy doxyRAGenlocal.html to local machine, launch a python server 
 # Open http://localhost:4461/annotated.html on your browser
-#
-#
-#
+python3 -m http.server 4461 --bind 0.0.0.0
+
+
+
+# m4, autotools, pkg-config, ctags
+  509  ls
+  510  cd ..
+  511  wget ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz 
+  512  tar -xvzf m4-1.4.19.tar.gz
+  513  cd m4-1.4.19
+  514  ls
+  515  ./configure --prefix=/home/atif/packages/autotools/
+  516  make -j8
+  517  make install
+  518  cd ../autotools/
+  519  ls
+  520  export PATH=/home/atif/packages/autotools/bin/:$PATH
+  483  wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz 
+  484  tar xf autoconf-2.69.tar.gz 
+  485  cd autoconf-2.69
+  503  ./configure --prefix=/home/atif/packages/autotools/
+  521  cd ../autoconf-2.69
+  522  ./configure 
+  523  ./configure --prefix=/home/atif/packages/autotools/
+  524  make -j8
+  525  make install
+  526  cd ..
+  527  wget http://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz
+  528  tar xf automake-1.15.tar.gz 
+  529  cd automake-1.15
+  530  ./configure --prefix=/home/atif/packages/autotools/
+  531  make -j8
+  532  make install
+  533  cd ..
+  545  wget http://ftp.gnu.org/gnu/libtool/libtool-2.4.tar.gz
+  546  tar xf libtool-2.4.tar.gz 
+  547  cd libtool-2.4
+  548  ls
+  549  ./configure --prefix=/home/atif/packages/autotools/
+  550  make
+  551  make install
+  552  cd ..
+  553  ls
+export LD_LIBRARY_PATH=/home/atif/packages/autotools/lib/:$LD_LIBRARY_PATH
+export PATH=/home/atif/packages/autotools/bin/:$PATH
+  531  wget https://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
+  532  tar xvzf pkg-config-0.29.2.tar.gz
+  533  cd pkg-config-0.29.2
+  534  ./configure --prefix=/home/atif/packages/autotools --with-internal-glib
+  535  make -j8
+  536  make install
+
+  477  git clone https://github.com/universal-ctags/ctags.git
+  478  cd ctags/

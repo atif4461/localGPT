@@ -275,9 +275,11 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
         os.mkdir(MODELS_PATH)
 
     qa = retrieval_qa_pipline(device_type, use_history, promptTemplate_type=model_type)
+    print("\nEnter a query: ")
     # Interactive questions and answers
     while True:
-        query = input("\nEnter a query: ")
+        query = input(" ")
+        #query = input("\nEnter a query: ")
         if query == "exit":
             break
         # Get the answer from the chain
@@ -285,9 +287,9 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
         answer, docs = res["result"], res["source_documents"]
 
         # Print the result
-        print("\n\n> Question:")
+        print("> Question:")
         print(query)
-        print("\n> Answer:")
+        print("> Answer:")
         print(answer)
 
         if show_sources:  # this is a flag that you can set to disable showing answers.
