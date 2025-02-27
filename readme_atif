@@ -23,10 +23,11 @@
 pip install tree-sitter==0.20.4 tree-sitter-languages==1.10.2
 
 
+# Running the setup
+python run_celloai.py --model_type=llama3 --temperature=0.01
+python run_interactive.py --model_type=llama3 --temperature=0.01
 
 
-
-# python run_localGPT.py --model_type=llama3 --temperature=0.01
 #
 # Installing Doxygen and graphviz
 # TODO
